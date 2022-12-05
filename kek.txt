@@ -1,0 +1,30 @@
+Current size: 1000
+       std micros: 34
+sequential micros: 38
+  parallel micros: 36
+Boost: 1.04545
+Current size: 10000
+       std micros: 449
+sequential micros: 558
+  parallel micros: 201
+Boost: 2.77612
+Current size: 100000
+       std micros: 6006
+sequential micros: 6072
+  parallel micros: 1887
+Boost: 3.21724
+Current size: 1000000
+       std micros: 63606
+sequential micros: 66244
+  parallel micros: 22572
+Boost: 2.93476
+Current size: 10000000
+       std micros: 735617
+sequential micros: 762225
+  parallel micros: 255720
+Boost: 2.9807
+Current size: 100000000
+       std micros: 8404090
+sequential micros: 8472388
+  parallel micros: 2711813
+Boost: 3.12425
