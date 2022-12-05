@@ -7,8 +7,6 @@
 #include <vector>
 #include <iomanip>
 
-#define TWO_PARTS
-
 typedef int elem_type;
 
 inline std::chrono::steady_clock::time_point now() {
@@ -34,14 +32,8 @@ void qsort_sequential(elem_type* a, size_t l, size_t r)
     elem_type* ml = std::partition(a + l, a + r, [x](elem_type const& y) {
         return y < x;
     });
-#ifndef TWO_PARTS
-    elem_type* mr = std::partition(ml, a + r, [x](elem_type const& y) {
-        return y <= x;
-    });
-#else
     std::swap(a[r - 1], *ml);
     elem_type* mr = ml + 1;
-#endif
 
     qsort_sequential(a, l, (ml - a));
     qsort_sequential(a, (mr - a), r);
@@ -54,7 +46,7 @@ void qsort_parallel(elem_type* a, size_t l, size_t r)
         return;
 
     if (r - l < block_size) {
-        std::sort(a + l, a + r);
+        qsort_sequential(a, l, r);
         return;
     }
 
@@ -62,14 +54,8 @@ void qsort_parallel(elem_type* a, size_t l, size_t r)
     elem_type* ml = std::partition(a + l, a + r, [x](elem_type const& y) {
         return y < x;
     });
-#ifndef TWO_PARTS
-    elem_type* mr = std::partition(ml, a + r, [x](elem_type const& y) {
-        return y <= x;
-    });
-#else
     std::swap(a[r - 1], *ml);
     elem_type* mr = ml + 1;
-#endif
 
     cilk_spawn qsort_parallel(a, l, (ml - a));
     qsort_parallel(a, (mr - a), r);
@@ -81,7 +67,7 @@ void qsort_std(elem_type* a, size_t l, size_t r) {
 }
 
 const size_t N[] = {1000, 10 * 1000, 100 * 1000, 1000 * 1000, 10 * 1000 * 1000, 100 * 1000 * 1000};
-const int ATTEMPTS = 3;
+const int ATTEMPTS = 10;
 
 std::pair<uint64_t, elem_type*> bench_micros(elem_type* a, size_t n, const std::function<void(elem_type*, size_t, size_t)>& qsort) {
     auto* a_copy = new elem_type[n];
